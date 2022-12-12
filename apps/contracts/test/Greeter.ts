@@ -12,6 +12,7 @@ describe("Greeter", () => {
 
     const users: any = []
     const groupId = 42
+    const groupId2 = 24
     const group = new Group()
 
     before(async () => {
@@ -31,10 +32,27 @@ describe("Greeter", () => {
         group.addMember(users[1].identity.generateCommitment())
     })
 
-    describe("# joinGroup", () => {
+    describe("# createGroup", () => {
+        it("Should create a new group with ID 24", async () => {
+            const transaction = greeter.createGroup(groupId2)
+            await expect(transaction).to.emit(greeter, "NewGroup").withArgs(groupId2)
+        })
+    })
+
+    describe("# joinGroup 42", () => {
         it("Should allow users to join the group", async () => {
             for (let i = 0; i < group.members.length; i += 1) {
-                const transaction = greeter.joinGroup(group.members[i], users[i].username)
+                const transaction = greeter.joinGroup(groupId, group.members[i], users[i].username)
+
+                await expect(transaction).to.emit(greeter, "NewUser").withArgs(group.members[i], users[i].username)
+            }
+        })
+    })
+
+    describe("# joinGroup 24", () => {
+        it("Should allow users to join the group", async () => {
+            for (let i = 0; i < group.members.length; i += 1) {
+                const transaction = greeter.joinGroup(groupId2, group.members[i], users[i].username)
 
                 await expect(transaction).to.emit(greeter, "NewUser").withArgs(group.members[i], users[i].username)
             }
@@ -55,6 +73,7 @@ describe("Greeter", () => {
             const solidityProof = packToSolidityProof(fullProof.proof)
 
             const transaction = greeter.greet(
+                groupId,
                 greeting,
                 fullProof.publicSignals.merkleRoot,
                 fullProof.publicSignals.nullifierHash,

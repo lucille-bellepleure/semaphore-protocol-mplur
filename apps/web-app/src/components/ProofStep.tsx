@@ -44,7 +44,7 @@ export default function ProofStep({ signer, contract, identity, onPrevClick, onL
                 onLog(`Posting your anonymous greeting...`)
 
                 try {
-                    const groupId = await contract.groupId()
+                    const groupId = 42;
                     const users = await contract.queryFilter(contract.filters.NewUser())
                     const group = new Group()
 
@@ -53,10 +53,13 @@ export default function ProofStep({ signer, contract, identity, onPrevClick, onL
                     const { proof, publicSignals } = await generateProof(identity, group, groupId.toString(), greeting)
                     const solidityProof = packToSolidityProof(proof)
 
+                    const groupId2 = 42;
+
                     const { status } = await fetch(`${process.env.RELAY_URL}/greet`, {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({
+                            groupId,
                             greeting,
                             merkleRoot: publicSignals.merkleRoot,
                             nullifierHash: publicSignals.nullifierHash,

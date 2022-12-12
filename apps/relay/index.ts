@@ -42,6 +42,7 @@ app.post("/greet", async (req, res) => {
 
     try {
         const transaction = await contract.greet(
+            '42',
             utils.formatBytes32String(greeting),
             merkleRoot,
             nullifierHash,
@@ -62,7 +63,7 @@ app.post("/join-group", async (req, res) => {
     const { identityCommitment, username } = req.body
 
     try {
-        const transaction = await contract.joinGroup(identityCommitment, utils.formatBytes32String(username))
+        const transaction = await contract.joinGroup('42', identityCommitment, utils.formatBytes32String(username))
 
         await transaction.wait()
 
